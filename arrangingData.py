@@ -3,6 +3,7 @@ import dataDownload
 import argparse
 from datetime import date
 import tzlocal
+import symboleListCreate
 
 #step #2:  change csv file in c: folder to the right format of table
 def parse_args():
