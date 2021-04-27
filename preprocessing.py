@@ -12,7 +12,7 @@ symbols = symboleListCreate.listSymbolsCreate()
 def createTable(list):
     columns =['t-13','t-12','t-11','t-10','t-9','t-8','t-7','t-6','t-5','t-4','t-3','t-2',
               'd1','d2','d3','d4','d5','d6','d7','d8','d9','d10','d11','d12','d13','d14','d15','d16','d17','d18','d19','d20','isJanuary']
-    df = pd.DataFrame( columns = columns, index=list)
+    df = pd.DataFrame( columns=columns, index=list)
     return df
 
 #return the daily return from the input df row
@@ -31,12 +31,13 @@ def oneMonth(df,month,year):
     df_year = df.loc[y]
     m=df_year['Date'].dt.month.between(month,month)
     df_month = df_year.loc[m]
-    return  df_month
+    return df_month
+
 #return a valid value of month
 def validMonth(val):
     if val==0 or val==12:
         return 12
-    return(val%12)
+    return val % 12
 
 
 def nextMonthReturns(month, year, list):
@@ -128,45 +129,53 @@ def generateInputData(inputTable,month,year):
     print(inputTable.shape[0])#print how many stocks left
     #Yverctor.dropna(subset = ["t+1"], inplace=True)
     #Yverctor.to_csv(rf'Next month returns\NextMonthReturnsForMonth-{str(month)},Year-{str(year)}.csv',index = True)
-    inputTable.to_csv(rf'Data\inputDataForMonth-{str(month)},Year-{str(year)}.csv',index = True)
+    inputTable.to_csv(rf'Data\inputDataForMonth-{str(month)},Year-{str(year)}.csv',index = False)
     nextMonthReturns(month, year,list)
     print("end generateInputData")
     return inputTable, list
 
 
-def CumulativeReturn(row,j):
-    res=1
-    x=0
-    if j<12:
-        for i in range(1,j+1):
-             x=1+row.iloc[i]
-             res*=x
+def CumulativeReturn(row, j):
+    res = 1
+    x = 0
+    if j < 12:
+        for i in range(0, j+1):
+             x = 1 + row.iloc[i]
+             res *= x
     else:
-        for i in range(13,j+1):
-            x=1+row.iloc[i]
-            res*=x
-
+        for i in range(12, j+1):
+            x = 1 + row.iloc[i]
+            res *= x
     return res-1
 
-def generateInputCumulativeReturn(month,year,list):
-    s='inputDataForMonth-'+str(month)+',Year-'+str(year)
+
+def generateInputCumulativeReturn(month, year, list):
+    s = 'inputDataForMonth-'+str(month)+',Year-'+str(year)
     inputTable = pd.read_csv(rf'Data\{s}.csv')
-    outputTable= createTable(list)
+    print(inputTable)
+    outputTable = inputTable.copy()
+    #outputTable.loc[:,'t-13']=inputTable['t-13']
+    if month==1:
+        outputTable.iloc[:,32]=1
+    else:
+        outputTable.iloc[:,32]=0
     for i in range(inputTable.shape[0]):
 #        if(inputTable.iloc[i][0]==None):
-#           continue
-        for j in range(32):
+#            continue
+        for j in range(1, 32):
             if j<12 and j>=0:
-                print(i)
-                outputTable.iloc[i][j]=CumulativeReturn(inputTable.iloc[i],j)
+                #outputTable.iloc[i][0] = inputTable.iloc[i][0]
+                #print(outputTable.iloc[i][0])
+                outputTable.iloc[i][j] = CumulativeReturn(outputTable.iloc[i], j)
             elif j>=12:
-                outputTable.iloc[i][j]=CumulativeReturn(inputTable.iloc[i],j)
-    outputTable.iloc[:,32]=inputTable.iloc[:,32]
+                outputTable.iloc[i][j]=CumulativeReturn(outputTable.iloc[i],j)
+
     #delete empty rows
     #print(outputTable.shape[0])
     #outputTable.dropna(subset = ["t-13"], inplace=True)
     #print(outputTable.shape[0])#print how many stocks left
     outputTable.to_csv(rf'Data\CumulativeReturnForMonth-{str(month)},Year-{str(year)}.csv',index = True)
+    print(outputTable)
     return outputTable
 
 def generateZscore(month,year):
@@ -183,7 +192,7 @@ def generateZscore(month,year):
         outputTable.iloc[:,32]=1
     else:
         outputTable.iloc[:,32]=0
-    outputTable.to_csv(rf'Data\ZscoreForMonth-{str(month)},Year-{str(year)}.csv',index = False)
+    outputTable.to_csv(rf'Data\ZscoreForMonth-{str(month)},Year-{str(year)}.csv', index=False)
     return outputTable
 
 def calculateMedian(inputVector):
