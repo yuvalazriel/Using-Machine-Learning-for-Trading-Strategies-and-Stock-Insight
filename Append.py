@@ -13,10 +13,11 @@ import preprocessing
 
 #I didnt made any changes yet - dont run them blindely
 def appendMonths(month,year, endMonth,endYear):
-    y=year
-    s='ZscoreForMonth-'+str(month)+',Year-'+str(year)
+    y = year
+    s = 'ZscoreForMonth-'+str(month)+',Year-'+str(year)
     inputTable = pd.read_csv(rf'Data\{s}.csv')
-    ZscoreoutputTable= inputTable.copy()
+    ZscoreoutputTable = inputTable.copy()
+    print(inputTable)
     '''
     s='ZscoreForMonth-'+str(month+1)+',Year-'+str(year)
     AppendTable = pd.read_csv(rf'Data after preprocessing\{s}.csv')
@@ -114,5 +115,4 @@ def appendMonthsVector(month,year):
     ZscoreoutputTable=ZscoreoutputTable.drop(ZscoreoutputTable.columns[[0]],1)
     ZscoreoutputTable.to_csv(rf'FINAL DATA\TrainVectorForYear-{str(y)} to Year-{str(year)}.csv',index =False)
 
-
-appendMonths(1,1981,11,2020)
+appendMonths(2,1981,11,2020)
