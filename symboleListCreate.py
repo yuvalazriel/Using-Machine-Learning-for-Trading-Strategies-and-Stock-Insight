@@ -5,7 +5,7 @@ def listSymbolsCreate():
     inputTable = pd.read_csv(rf'sp500_history.csv')
     for i in range(881):
         flag = 0
-        s = inputTable.get_value(i,"value")
+        s = inputTable._get_value(i,"value")
         '''
         if s == "RRC" or s == "LIFE" or s == "RX" or s =="AYE" or s =="WFR" or s =="NYX" or s =="JNY"or s =="MI" or s=="TLAB" \
                 or s=="MOLX" or s=="KSE" or s=="SLE" or s=="MFE" or s=="PCL" or s=="GLK" or s=="PTV" or s=="MEE" \
